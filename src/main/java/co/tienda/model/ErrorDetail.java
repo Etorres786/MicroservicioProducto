@@ -22,8 +22,8 @@ public class ErrorDetail   {
   @JsonProperty("detail")
   private String detail = null;
 
-  @JsonProperty("id")
-  private String id = null;
+  @JsonProperty("productCode")
+  private String productCode = null;
 
   @JsonProperty("source")
   private String source = null;
@@ -76,25 +76,25 @@ public class ErrorDetail   {
     this.detail = detail;
   }
 
-  public ErrorDetail id(String id) {
-    this.id = id;
+  public ErrorDetail productCode(String productCode) {
+    this.productCode = productCode;
     return this;
   }
 
   /**
-   * Get id
-   * @return id
+   * Get productCode
+   * @return productCode
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
 
-  public String getId() {
-    return id;
+  public String getProductCode() {
+    return productCode;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setProductCode(String productCode) {
+    this.productCode = productCode;
   }
 
   public ErrorDetail source(String source) {
@@ -172,7 +172,7 @@ public class ErrorDetail   {
     ErrorDetail errorDetail = (ErrorDetail) o;
     return Objects.equals(this.code, errorDetail.code) &&
         Objects.equals(this.detail, errorDetail.detail) &&
-        Objects.equals(this.id, errorDetail.id) &&
+        Objects.equals(this.productCode, errorDetail.productCode) &&
         Objects.equals(this.source, errorDetail.source) &&
         Objects.equals(this.status, errorDetail.status) &&
         Objects.equals(this.title, errorDetail.title);
@@ -180,7 +180,7 @@ public class ErrorDetail   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, detail, id, source, status, title);
+    return Objects.hash(code, detail, productCode, source, status, title);
   }
 
   @Override
@@ -188,9 +188,9 @@ public class ErrorDetail   {
     StringBuilder sb = new StringBuilder();
     sb.append("class ErrorDetail {\n");
     
-    sb.append("    code: ").append(toIndentedString(code)).append("\n");
+    sb.append("    codeRequest: ").append(toIndentedString(code)).append("\n");
     sb.append("    detail: ").append(toIndentedString(detail)).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    productCode: ").append(toIndentedString(productCode)).append("\n");
     sb.append("    source: ").append(toIndentedString(source)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    title: ").append(toIndentedString(title)).append("\n");

@@ -41,30 +41,51 @@ public class ProductApiController implements ProductApi {
 		this.request = request;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ResponseEntity<Producto> addProducto(
 
 			@ApiParam(value = "Producto para agregar", required = true) @Valid @RequestBody Producto producto) {
-		
+
 		String accept = request.getHeader("Accept");
 		ErrorDetail error = new ErrorDetail();
-		
+
 		if (accept != null && accept.contains("application/json")) {
+
+			if (producto.getCode() == "" || producto.getName() == "" || producto.getType() == "") {
+				
+				error.setCode("204");
+				error.detail("Invalid Params");
+				error.setStatus("No content");
+				error.setTitle("Error");
+				error.setProductCode(producto.getCode());
+				error.setSource("/addProducto");
+
+				log.error("faltan parametros" + producto.getCode());
+				return (ResponseEntity<Producto>) returnError(error, HttpStatus.METHOD_FAILURE);
+			}
 			
+			if (producto.getCode() != null && productoRepository.exists(producto.getCode())) {
+
+				error.setCode("204");
+				error.detail("Ya existe un producto con este codigo: " + producto.getCode());
+				error.setStatus("No content");
+				error.setTitle("Error");
+				error.setProductCode(producto.getCode());
+				error.setSource("/addProducto");
+
+				log.error("Ya existe un producto con este codigo: " + producto.getCode());
+				return (ResponseEntity<Producto>) returnError(error, HttpStatus.METHOD_FAILURE);
+			}
+			
+			log.info("Se Registra el producto "+ producto.getCode());
 			productoRepository.save(producto);
 			
 			return new ResponseEntity<Producto>(producto, HttpStatus.OK);
 			
-		}else {
-			
-			error.setCode("204");
-			error.detail("Ya existe un producto con este codigo: " + producto.getCode());
-			error.setStatus("No content");
-			error.setTitle("Error");
-			error.setSource("/addProducto");
-//			return returnError(error,HttpStatus.METHOD_FAILURE);
-			
 		}
-		return null;
+			
+			return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+			
 	}
 
 	@Override
@@ -76,8 +97,8 @@ public class ProductApiController implements ProductApi {
 
 		return new ResponseEntity<JsonApiBodyResponseSuccess>(response, HttpStatus.OK);
 	}
-	
-	private ResponseEntity<?> returnError(ErrorDetail oError, HttpStatus status){
+
+	private ResponseEntity<?> returnError(ErrorDetail oError, HttpStatus status) {
 		List listaErrores = new ArrayList();
 		listaErrores.add(oError);
 		return new ResponseEntity<List>(listaErrores, status);
