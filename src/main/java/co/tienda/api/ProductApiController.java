@@ -61,7 +61,6 @@ public class ProductApiController implements ProductApi {
 			error.setStatus("No content");
 			error.setTitle("Error");
 			error.setSource("/addProducto");
-			return new ResponseEntity<?>(error, HttpStatus.METHOD_FAILURE);
 //			return returnError(error,HttpStatus.METHOD_FAILURE);
 			
 		}
