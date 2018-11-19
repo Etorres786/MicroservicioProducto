@@ -2,6 +2,7 @@ package co.tienda.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import co.tienda.model.ErrorDetail;
 import co.tienda.model.JsonApiBodyResponseSuccess;
 import co.tienda.model.Producto;
 import co.tienda.repository.ProductoRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,27 +41,47 @@ public class ProductApiController implements ProductApi {
 		this.request = request;
 	}
 
-	public ResponseEntity<?> addProducto(
+	public ResponseEntity<Producto> addProducto(
+
 			@ApiParam(value = "Producto para agregar", required = true) @Valid @RequestBody Producto producto) {
 		
-		System.out.println("ENTRE POR ACA AL CONTROLLE");
-		producto.setName(producto.getName());
-		producto.setPrecio(producto.getPrecio());
-		Producto personaSave = productoRepository.save(producto);
+		String accept = request.getHeader("Accept");
+		ErrorDetail error = new ErrorDetail();
 		
-		return new ResponseEntity<Producto>(personaSave, HttpStatus.OK);
+		if (accept != null && accept.contains("application/json")) {
+			
+			productoRepository.save(producto);
+			
+			return new ResponseEntity<Producto>(producto, HttpStatus.OK);
+			
+		}else {
+			
+			error.setCode("204");
+			error.detail("Ya existe un producto con este codigo: " + producto.getCode());
+			error.setStatus("No content");
+			error.setTitle("Error");
+			error.setSource("/addProducto");
+			return new ResponseEntity<?>(error, HttpStatus.METHOD_FAILURE);
+//			return returnError(error,HttpStatus.METHOD_FAILURE);
+			
+		}
+		return null;
 	}
 
 	@Override
 	public ResponseEntity<?> findAll() {
-		System.out.println();
+
 		JsonApiBodyResponseSuccess response = new JsonApiBodyResponseSuccess();
 		List<Producto> lista = (List<Producto>) productoRepository.findAll();
 		response.setData(lista);
 
 		return new ResponseEntity<JsonApiBodyResponseSuccess>(response, HttpStatus.OK);
 	}
-
-
+	
+	private ResponseEntity<?> returnError(ErrorDetail oError, HttpStatus status){
+		List listaErrores = new ArrayList();
+		listaErrores.add(oError);
+		return new ResponseEntity<List>(listaErrores, status);
+	}
 
 }
